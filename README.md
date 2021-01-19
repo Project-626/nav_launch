@@ -1,2 +1,2 @@
 # nav_launch
-Launch files and configs for navigation for use with P626.
+Navigation launch files and configs for use with P626.
