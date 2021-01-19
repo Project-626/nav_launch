@@ -10,10 +10,11 @@ from nav2_common.launch import RewrittenYaml
 
 
 def generate_launch_description():
-    # Get the launch directory
-    params_file = '/home/max/Projects/ros2_ws/src/nav_launch/configs/parameters.yaml'
-    default_bt_xml_filename = '/home/max/Projects/ros2_ws/src/nav_launch/configs/navigation.bt.yaml'
-    urdf_file = '/home/max/Projects/ros2_ws/src/nav_launch/urdf/p626.urdf'
+    share = bringup_dir = get_package_share_directory('nav_launch')
+    nav_params = LaunchConfiguration('nav_params')
+    bt = LaunchConfiguration('bt')
+    urdf = LaunchConfiguration('urdf')
+    cartographer_params = LaunchConfiguration('cartographer_params')
 
     lifecycle_nodes = ['controller_server',
                        'planner_server',
@@ -21,24 +22,42 @@ def generate_launch_description():
                        'bt_navigator',
                        'waypoint_follower']
 
-    # Create our own temporary YAML files that include substitutions
+    param_substitutions = {
+        'default_bt_xml_filename': bt,
+        }
+
+    configured_nav_params = RewrittenYaml(
+            source_file=nav_params,
+            param_rewrites=param_substitutions,
+            convert_types=True)
 
     return LaunchDescription([
-        # Set env var to print messages to stdout immediately
         SetEnvironmentVariable('RCUTILS_LOGGING_BUFFERED_STREAM', '1'),
+        DeclareLaunchArgument(
+            'nav_params', default_value=os.path.join(share, 'parameters.yaml'),
+            description='configuration file for navigation'),
+        DeclareLaunchArgument(
+            'bt', default_value=os.path.join(share, 'navigation.bt.xml'),
+            description='behavior tree for navigation'),
+        DeclareLaunchArgument(
+            'urdf', default_value=os.path.join(share, 'p626.urdf'),
+            description='urdf file'),
+        DeclareLaunchArgument(
+            'cartographer_params', default_value='cartographer_2d.lua',
+            description='urdf file'),
         Node(
             package='robot_state_publisher',
             executable='robot_state_publisher',
             name='robot_state_publisher',
             output='screen',
             parameters=[{'use_sim_time': False}],
-            arguments=[urdf_file]),
+            arguments=[urdf]),
         Node(
             package='cartographer_ros',
             executable='cartographer_node',
             name='cartographer_node',
             output='screen',
-            arguments=['-configuration_directory', '/home/max/Projects/ros2_ws/src/nav_launch/configs', '-configuration_basename', 'cartographer_2d.lua'],
+            arguments=['-configuration_directory', share, '-configuration_basename', cartographer_params],
             remappings=[('echoes', 'scan')],
         ),
         Node(
@@ -51,7 +70,7 @@ def generate_launch_description():
             package='nav2_controller',
             executable='controller_server',
             output='screen',
-            parameters=[params_file],
+            parameters=[configured_nav_params],
             ),
 
         Node(
@@ -59,7 +78,7 @@ def generate_launch_description():
             executable='planner_server',
             name='planner_server',
             output='screen',
-            parameters=[params_file],
+            parameters=[configured_nav_params],
             ),
 
         Node(
@@ -67,7 +86,7 @@ def generate_launch_description():
             executable='recoveries_server',
             name='recoveries_server',
             output='screen',
-            parameters=[params_file],
+            parameters=[configured_nav_params],
             ),
 
         Node(
@@ -75,7 +94,7 @@ def generate_launch_description():
             executable='bt_navigator',
             name='bt_navigator',
             output='screen',
-            parameters=[params_file],
+            parameters=[configured_nav_params],
             ),
 
         Node(
@@ -83,7 +102,7 @@ def generate_launch_description():
             executable='waypoint_follower',
             name='waypoint_follower',
             output='screen',
-            parameters=[params_file],
+            parameters=[configured_nav_params],
             ),
 
         Node(
