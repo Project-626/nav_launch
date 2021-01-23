@@ -13,14 +13,10 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name), glob('launch/*.py')),
-        (os.path.join('share', package_name), glob('configs/*')),
-<<<<<<< HEAD
-        (os.path.join('share', package_name), glob('meshes/*')),
-        (os.path.join('share', package_name), glob('urdf/*'))
-=======
-        (os.path.join('share', package_name), glob('urdf/*')),
->>>>>>> 103913f1d56b169cbc99e5dfb8fdceeb03a0a9b9
+        (os.path.join('share', package_name,'launch'), glob('launch/*.py')),
+        (os.path.join('share', package_name,'configs'), glob('configs/*')),
+        (os.path.join('share', package_name,'meshes'), glob('meshes/*')),
+        (os.path.join('share', package_name,'urdf'), glob('urdf/*'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,

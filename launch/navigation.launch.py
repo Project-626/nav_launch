@@ -40,7 +40,7 @@ def generate_launch_description():
             'bt', default_value=os.path.join(share, 'navigation.bt.xml'),
             description='behavior tree for navigation'),
         DeclareLaunchArgument(
-            'urdf', default_value=os.path.join(share, 'p626.urdf'),
+            'urdf', default_value=os.path.join(share, 'p626.urdf.xml'),
             description='urdf file'),
         DeclareLaunchArgument(
             'cartographer_params', default_value='cartographer_2d.lua',

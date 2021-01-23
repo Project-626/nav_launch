@@ -1,0 +1,34 @@
+<robot name="Project_626">
+  <material name="base_color">
+    <color rgba="0 0.2 0.8 0.95" />
+  </material>
+  <material name="gray">
+    <color rgba="0.2 0.2 0.2 1" />
+  </material>
+
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://nav_launch/meshes/p626.dae" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="base_color" />
+    </visual>
+  </link>
+
+  <link name="laser_link" />
+
+  <link name="imu_link" />
+
+  <joint name="base_to_imu" type="fixed">
+    <parent link="base_link" />
+    <child link="imu_link" />
+    <origin xyz="-0.075 0 0" />
+  </joint>
+
+  <joint name="base_to_laser" type="fixed">
+    <parent link="base_link" />
+    <child link="laser_link" />
+    <origin xyz="-0.075 0 0.12" />
+  </joint>
+</robot>
