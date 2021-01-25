@@ -11,6 +11,8 @@ from nav2_common.launch import RewrittenYaml
 
 def generate_launch_description():
     share = bringup_dir = get_package_share_directory('nav_launch')
+    configs = os.path.join(share, 'configs')
+    urdf_dir = os.path.join(share, 'urdf')
     nav_params = LaunchConfiguration('nav_params')
     bt = LaunchConfiguration('bt')
     urdf = LaunchConfiguration('urdf')
@@ -34,13 +36,13 @@ def generate_launch_description():
     return LaunchDescription([
         SetEnvironmentVariable('RCUTILS_LOGGING_BUFFERED_STREAM', '1'),
         DeclareLaunchArgument(
-            'nav_params', default_value=os.path.join(share, 'parameters.yaml'),
+            'nav_params', default_value=os.path.join(configs, 'parameters.yaml'),
             description='configuration file for navigation'),
         DeclareLaunchArgument(
-            'bt', default_value=os.path.join(share, 'navigation.bt.xml'),
+            'bt', default_value=os.path.join(configs, 'navigation.bt.xml'),
             description='behavior tree for navigation'),
         DeclareLaunchArgument(
-            'urdf', default_value=os.path.join(share, 'p626.urdf.xml'),
+            'urdf', default_value=os.path.join(urdf_dir, 'p626.urdf.xml'),
             description='urdf file'),
         DeclareLaunchArgument(
             'cartographer_params', default_value='cartographer_2d.lua',
@@ -57,7 +59,7 @@ def generate_launch_description():
             executable='cartographer_node',
             name='cartographer_node',
             output='screen',
-            arguments=['-configuration_directory', share, '-configuration_basename', cartographer_params],
+            arguments=['-configuration_directory', configs, '-configuration_basename', cartographer_params],
             remappings=[('echoes', 'scan')],
         ),
         Node(
